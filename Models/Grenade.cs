@@ -22,4 +22,29 @@ public class Grenade
 
 	public CsTeam Team { get; set; }
 	public float Delay { get; set; }
+
+	public bool IsValid()
+	{
+		if (Angle == null || Position == null || Velocity == null)
+		{
+			return false;
+		}
+
+		if (float.IsNaN(Angle.X) || float.IsNaN(Angle.Y) || float.IsNaN(Angle.Z))
+		{
+			return false;
+		}
+
+        if (float.IsNaN(Position.X) || float.IsNaN(Position.Y) || float.IsNaN(Position.Z))
+        {
+            return false;
+        }
+
+        if (float.IsNaN(Velocity.X) || float.IsNaN(Velocity.Y) || float.IsNaN(Velocity.Z))
+        {
+            return false;
+        }
+
+		return true;
+    }
 }

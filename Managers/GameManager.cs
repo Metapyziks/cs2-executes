@@ -34,6 +34,13 @@ public sealed class GameManager : BaseManager
         _isScrambleEnabled = true;
     }
 
+    private void RemoveInvalidGrenades()
+    {
+        if (_mapConfig == null) return;
+
+        _mapConfig.Grenades.RemoveAll(grenade => !grenade.IsValid());
+    }
+
     public bool LoadSpawns(string moduleDirectory, string map)
     {
         var fileName = $"{map}.json";
@@ -72,6 +79,7 @@ public sealed class GameManager : BaseManager
         }
 
         _mapConfig = parsedConfig;
+        RemoveInvalidGrenades();
         ParseMapConfigIdReferences(_mapConfig);
 
         Console.WriteLine($"-------------------------- Loaded {_mapConfig.Scenarios?.Count} executes config.");
@@ -108,16 +116,7 @@ public sealed class GameManager : BaseManager
 
         // If we find a scenario that has less spawns than active players, try again
 
-        foreach (var scenario in validScenarios)
-        {
-            var totalSpawnCount = scenario.GetTotalSpawnCount();
-
-            if (totalSpawnCount < _queueManager.ActivePlayers.Count)
-            {
-                Console.WriteLine($"[Executes] Skipping \"{scenario.Name}\" because it has less spawns than players.");
-                validScenarios.Remove(scenario);
-            }
-        }
+        validScenarios.RemoveAll(scenario => scenario.GetTotalSpawnCount() > _queueManager.ActivePlayers.Count);
 
         if (validScenarios.Count == 0)
         {
@@ -146,9 +145,7 @@ public sealed class GameManager : BaseManager
 
             foreach (var spawnId in scenario.SpawnIds)
             {
-                var spawn = mapConfig.Spawns.FirstOrDefault(x => x.Id == spawnId, null);
-
-                
+                var spawn = mapConfig.Spawns.FirstOrDefault(x => x != null && x.Id == spawnId, null);                
 
                 // TODO: Figure out why the IDE thinks spawn is never null
                 if (spawn != null)

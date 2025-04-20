@@ -11,13 +11,15 @@ public class QAngleJsonConverter : JsonConverter<QAngle>
     {
         if (reader.TokenType != JsonTokenType.String)
         {
-            throw new JsonException("Expected a string value.");
+            Console.WriteLine("Error! Expected a string value for QAngle JSON Deserialisation.");
+            return new QAngle(float.NaN, float.NaN, float.NaN);
         }
 
         var stringValue = reader.GetString();
         if (stringValue == null)
         {
-            throw new JsonException("String value is null.");
+            Console.WriteLine("Error! String value is null for QAngle JSON Deserialisation.");
+            return new QAngle(float.NaN, float.NaN, float.NaN);
         }
 
         stringValue = stringValue.Trim(); 
@@ -28,15 +30,16 @@ public class QAngleJsonConverter : JsonConverter<QAngle>
 
         if (values.Length != 3)
         {
-            throw new JsonException($"String value '{stringValue}' is not in the correct format (X Y Z).");
+            Console.WriteLine($"String value '{stringValue}' is not in the correct format (X Y Z).");
+            return new QAngle(float.NaN, float.NaN, float.NaN);
         }
 
         if (!float.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out var x) ||
             !float.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out var y) ||
             !float.TryParse(values[2], NumberStyles.Any, CultureInfo.InvariantCulture, out var z))
         {
-            Console.WriteLine($"[Executes] Unable to parse QAngle float values for: '{stringValue}'");
-            throw new JsonException($"Unable to parse QAngle float values for '{stringValue}'.");
+            Console.WriteLine($"[Executes] Unable to parse QAngle float values for: '{stringValue}'"); 
+            return new QAngle(float.NaN, float.NaN, float.NaN);
         }
 
         return new QAngle(x, y, z);

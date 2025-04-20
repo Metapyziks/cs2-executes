@@ -11,13 +11,15 @@ public class VectorJsonConverter : JsonConverter<Vector>
     {
         if (reader.TokenType != JsonTokenType.String)
         {
-            throw new JsonException("Expected a string value.");
+            Console.WriteLine("Error! Expected a string value for vector JSON Deserialisation.");
+            return new Vector(float.NaN, float.NaN, float.NaN);
         }
 
         var stringValue = reader.GetString();
         if (stringValue == null)
         {
-            throw new JsonException("String value is null.");
+            Console.WriteLine("Error! String value is null for vector JSON Deserialisation.");
+            return new Vector(float.NaN, float.NaN, float.NaN);
         }
 
         stringValue = stringValue.Trim();
@@ -28,15 +30,16 @@ public class VectorJsonConverter : JsonConverter<Vector>
 
         if (values.Length != 3)
         {
-            throw new JsonException($"String value '{stringValue}' is not in the correct format (X Y Z).");
+            Console.WriteLine($"Error! String value '{stringValue}' is not in the correct format (X Y Z).");
+            return new Vector(float.NaN, float.NaN, float.NaN);
         }
 
         if (!float.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out var x) ||
             !float.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out var y) ||
             !float.TryParse(values[2], NumberStyles.Any, CultureInfo.InvariantCulture, out var z))
         {
-            Console.WriteLine($"[Executes] Unable to parse Vector float values for: '{stringValue}'");
-            throw new JsonException($"Unable to parse Vector float values for '{stringValue}'.");
+            Console.WriteLine($"Error! Unable to parse Vector float values for: '{stringValue}'");
+            return new Vector(float.NaN, float.NaN, float.NaN);
         }
 
         return new Vector(x, y, z);
