@@ -14,11 +14,13 @@ public class VectorJsonConverter : JsonConverter<Vector>
             throw new JsonException("Expected a string value.");
         }
 
-        var stringValue = reader.GetString().Trim();
+        var stringValue = reader.GetString();
         if (stringValue == null)
         {
             throw new JsonException("String value is null.");
         }
+
+        stringValue = stringValue.Trim();
 
         var values = stringValue.Split(' '); // Split by space
 
