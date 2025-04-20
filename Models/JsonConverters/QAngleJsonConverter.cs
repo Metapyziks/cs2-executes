@@ -14,7 +14,7 @@ public class QAngleJsonConverter : JsonConverter<QAngle>
             throw new JsonException("Expected a string value.");
         }
 
-        var stringValue = reader.GetString();
+        var stringValue = reader.GetString().Trim();
         if (stringValue == null)
         {
             throw new JsonException("String value is null.");

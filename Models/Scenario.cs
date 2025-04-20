@@ -20,4 +20,20 @@ public class Scenario
 
     [JsonIgnore] 
     public Dictionary<CsTeam, List<Grenade>> Grenades { get; set; } = new();
+
+    public int GetTotalSpawnCount()
+    {
+        int totalSpawnCount = 0;
+
+        if (Spawns.ContainsKey(CsTeam.CounterTerrorist))
+        {
+            totalSpawnCount += Spawns[CsTeam.CounterTerrorist].Count;
+        }
+        if (Spawns.ContainsKey(CsTeam.Terrorist))
+        {
+            totalSpawnCount += Spawns[CsTeam.Terrorist].Count;
+        }
+
+        return totalSpawnCount;
+    }
 }

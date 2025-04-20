@@ -108,11 +108,9 @@ public sealed class GameManager : BaseManager
 
         // If we find a scenario that has less spawns than active players, try again
 
-        var players = Utilities.GetPlayers();
-
         foreach (var scenario in validScenarios)
         {
-            var totalSpawnCount = scenario.Spawns[CsTeam.Terrorist].Count + scenario.Spawns[CsTeam.CounterTerrorist].Count;
+            var totalSpawnCount = scenario.GetTotalSpawnCount();
 
             if (totalSpawnCount < _queueManager.ActivePlayers.Count)
             {
@@ -148,18 +146,26 @@ public sealed class GameManager : BaseManager
 
             foreach (var spawnId in scenario.SpawnIds)
             {
-                var spawn = mapConfig.Spawns.First(x => x.Id == spawnId);
+                var spawn = mapConfig.Spawns.FirstOrDefault(x => x.Id == spawnId, null);
+
+                
 
                 // TODO: Figure out why the IDE thinks spawn is never null
                 if (spawn != null)
                 {
+                    if (spawn.Team != CsTeam.CounterTerrorist && spawn.Team != CsTeam.Terrorist)
+                    {
+                        Console.WriteLine($"Error! spawn id \"{spawnId}\" assigned to invalid team: {spawn.Team}");
+                        continue;
+                    }
+
                     scenario.Spawns[spawn.Team].Add(spawn);
 
                     Console.WriteLine($"[Executes] Added spawn \"{spawn.Id}\" to \"{spawn.Team}\"");
                 }
                 else
                 {
-                    throw new Exception($"Error! spawn id \"{spawnId}\" does not exist!");
+                    Console.WriteLine($"Error! spawn id \"{spawnId}\" does not exist!");
                 }
             }
 
@@ -173,6 +179,12 @@ public sealed class GameManager : BaseManager
                 // TODO: Figure out why the IDE thinks grenade is never null
                 if (grenade != null)
                 {
+                    if (grenade.Team != CsTeam.CounterTerrorist && grenade.Team != CsTeam.Terrorist)
+                    {
+                        Console.WriteLine($"Error! grenade id \"{grenadeId}\" is assigned to invalid team: {grenade.Team}");
+                        continue;
+                    }
+
                     scenario.Grenades[grenade.Team].Add(grenade);
 
                     Console.WriteLine($"[Executes] Added grenade \"{grenade.Name}\" to \"{grenade.Team}\"");
