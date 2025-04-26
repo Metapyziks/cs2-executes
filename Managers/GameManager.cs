@@ -115,8 +115,7 @@ public sealed class GameManager : BaseManager
         }
 
         // If we find a scenario that has less spawns than active players, try again
-
-        validScenarios.RemoveAll(scenario => scenario.GetTotalSpawnCount() > _queueManager.ActivePlayers.Count);
+        validScenarios.RemoveAll(scenario => scenario.GetTotalSpawnCount() < _queueManager.ActivePlayers.Count);
 
         if (validScenarios.Count == 0)
         {
